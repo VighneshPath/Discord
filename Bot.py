@@ -132,9 +132,9 @@ async def users(ctx):
 
 @client.command()
 async def ping(ctx):
-	#Shows the Bot's Ping to the server
-    await ctx.send(f"Pong! {int(client.latency*1000)}ms")
-
+	#Prints Bot's latency to the server
+	await ctx.send(f"Pong! {round(client.latency*1000)}ms")
+	
 @client.command()
 async def clear(ctx, amount = 2):
 	#Clears Messages According to the value after command Else Clears a message
