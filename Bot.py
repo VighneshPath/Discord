@@ -4,25 +4,24 @@ Program for a Basic Discord Bot
 import discord
 from discord.ext import commands
 import json
-import youtube_dl
 import random
 
 #Making an instance of class Bot 
 client=commands.Bot(command_prefix = "!")
 #Removing Default Help Command so we can add our own
 client.remove_command("help")
-players = {}
 
-#Opening json file with token and swearwords
-with open('C:\\Users\\troge\\Projects\\Discord\\config.json','r') as config:
+#Opening json file with token, swearwords and Server ID
+with open("C:\\Users\\troge\\Projects\\Discord\\config.json",'r') as config:
 	jsonfile = json.loads(config.read())
-	token = jsonfile['TOKEN']
-	badwords = jsonfile['Bad_Words']
-	serverid = jsonfile['Server_Id']
+	token = jsonfile["TOKEN"]
+	badwords = jsonfile["Bad_Words"]
+	serverid = jsonfile["Server_Id"]
 
 #Prints Bot is Online 
 @client.event
 async def on_ready():
+	#checking if server matches with id
 	for guild in client.guilds:
 		if(guild.name == serverid):
 			break
@@ -30,19 +29,22 @@ async def on_ready():
 	print(f"{guild.name} (id: {guild.id})")
 	members= '\n - '.join([member.name for member in guild.members])
 	print(f"Guild Members:\n - {members}")
-	await client.change_presence(status = discord.Status.idle, activity = discord.Game(name = 'Fortnut'))
+	#Changing Bot's Status
+	await client.change_presence(status = discord.Status.idle, activity = discord.Game(name = "Fortnut"))
 	print("Bot is Online")
 
 #Greets New Users
 @client.event 
 async def on_member_join(member):
+	#Sends Direct Message
 	await member.create_dm()
 	await member.dm_channel.send(f"Hi {member.name}, welcome to our Guild!")
+	#Greets On Main Channel
 	for channel in member.guild.channels:
 		if (str(channel) == "voidmain"):
 			await channel.send(f"Welcome to the server {member.mention}")
 
-#Shows Which Member Was removed		
+#Shows Which Member Was removed on server
 @client.event
 async def on_member_remove(member):
 	for channel in member.guild.channels:
@@ -73,11 +75,13 @@ async def on_message_delete(message):
 	channel = message.channel
 	print(f"{author} deleted message: {content}")
 
+#Checking For Errors
 @client.event
 async def on_command_error(ctx, error):
 	if isinstance(error, commands.MissingRequiredArgument):
 		await ctx.send("Please Pass in all required arguments")
 
+#Making Custom Help command
 @client.command()
 async def help(ctx):
 	embed = discord.Embed(
@@ -97,9 +101,28 @@ async def help(ctx):
 
 @client.command(name='99')
 async def nine_nine(ctx):
+	#Simple Command Which Generates Random Brooklyn Nine Nine Quotes
 	b99quotes=["I'm the human form of the 💯 emoji.","Bingpot!","Cool. Cool cool cool cool cool cool cool","no doubt no doubt no doubt no doubt"]
 	response = random.choice(b99quotes)
 	await ctx.send(response)
+
+@client.command()
+async def ninenine(ctx):
+	#Says NINE-NINE
+		await ctx.send("NINE-NINE")
+
+@client.command()
+async def noice(ctx):
+	#Prints Toit!
+    await ctx.send("Toit!")
+
+@client.command()
+async def echo(ctx,*args):
+	#Repeats The message
+	output = ''
+	for word in args:
+		output+=(word+' ') 
+	await ctx.send(output)
 
 @client.command()
 async def users(ctx):
@@ -122,38 +145,28 @@ async def clear(ctx, amount = 2):
 		await ctx.channel.purge(limit = amount)
 
 @client.command()
-async def noice(ctx):
-	#Prints Toit!
-    await ctx.send("Toit!")
-
-@client.command()
-async def echo(ctx,*args):
-	#Repeats The message
-	output = ''
-	for word in args:
-		output+=(word+' ') 
-	await ctx.send(output)
-
-@client.command()
 async def ban(ctx, member : discord.Member, *, reason = None):
+	#Ban's User
 	await member.ban(reason = reason)
+	await ctx.send(f"Banned {member.mention}")
+
+@client.command()
+async def unban(ctx, * , member):
+	#Unban User
+	banned_users = await ctx.guild.bans()
+	member_name,member_discriminator = member.split('#')
+	for ban_entry in banned_users:
+		user = ban_entry.user
+		if ((user.name, user.discriminator) == (member_name,member_discriminator)):
+			await ctx.guild.unban(user)
+			await ctx.send(f"Unbanned {user.mention}")
+			return
 
 @client.command()
 async def kick(ctx, member : discord.Member, * , reason = None):
+	#Kick User From Server
 	await member.kick(reason = reason)
 
-@client.command()
-async def ninenine(ctx):
-		await ctx.send("NINE-NINE")
-
-@client.command(pass_context = True)
-async def play(ctx,url):
-	guild = ctx.message.guild
-	voice_client = guild.voice_client
-	player = await voice_client.create_ytdl_player(url)
-	players[guild.id] = player
-	player.start()
-	
 @client.command()
 async def  logout(ctx):
 	#Turns Bot OFF

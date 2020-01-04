@@ -1,5 +1,5 @@
 {
 	"TOKEN" : "TOKEN_HERE",
 	"Bad_Words" : ["Bad","Words","550"],
-	"Server_Id" : "SERVER_ID_HERE"
+	"Server_Id" : "SERVERID_HERE"
 }
