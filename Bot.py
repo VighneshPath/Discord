@@ -109,7 +109,7 @@ async def nine_nine(ctx):
 @client.command()
 async def ninenine(ctx):
 	#Says NINE-NINE
-		await ctx.send("NINE-NINE")
+	await ctx.send("NINE-NINE")
 
 @client.command()
 async def noice(ctx):
