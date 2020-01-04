@@ -102,7 +102,7 @@ async def help(ctx):
 @client.command(name='99')
 async def nine_nine(ctx):
 	#Simple Command Which Generates Random Brooklyn Nine Nine Quotes
-	b99quotes=["I'm the human form of the 💯 emoji.","Bingpot!","Cool. Cool cool cool cool cool cool cool","no doubt no doubt no doubt no doubt"]
+	b99quotes=["I'm the human form of the 💯 emoji.","Bingpot!","Cool Cool cool cool cool cool cool cool","no doubt no doubt no doubt no doubt"]
 	response = random.choice(b99quotes)
 	await ctx.send(response)
 
