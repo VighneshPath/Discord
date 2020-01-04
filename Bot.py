@@ -113,9 +113,9 @@ async def ninenine(ctx):
 
 @client.command()
 async def noice(ctx):
-	#Prints Toit!
-    await ctx.send("Toit!")
-
+	#Prints Toit
+	await ctx.send("Toit!!!")
+	
 @client.command()
 async def echo(ctx,*args):
 	#Repeats The message
