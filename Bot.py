@@ -5,6 +5,56 @@ import discord
 from discord.ext import commands
 import json
 import random
+import requests,bs4
+
+#Some Functions For Commands
+#Prints movie review from imdb
+def movie_review(mov):
+	res=requests.get('https://www.google.com/search?q='+mov)
+	soup=bs4.BeautifulSoup(res.text,'html.parser')
+	for link in soup.find_all('div',class_='kCrYT'):
+		try:
+			if('imdb' in link.a['href']):
+				moviereq=requests.get('http://google.com'+link.a['href'])  
+				break
+			else:
+				moviereq=False
+		except:
+			continue
+	if(moviereq!=False):
+		soupm=bs4.BeautifulSoup(moviereq.text,'html.parser')
+		summary=soupm.find('div',class_='summary_text')
+		return(summary.text.strip())
+	else:
+		return("Movie Not Found")
+
+#Prints First Link on Google.com		
+def first_link(link, platform = ""):
+	link = link + f"+{platform}"
+	res = requests.get(link)
+	yousoup =  bs4.BeautifulSoup(res.text, "html.parser")
+	for item in yousoup.find_all('div',class_='kCrYT'):
+		try:
+			if(platform in item.a["href"]):
+				return "http://google.com"+item.a["href"]
+		except:
+			continue
+	return "Link Not Found"
+
+#Get's the lyrics of songs
+def song_lyrics(song):
+	res=requests.get("https://www.google.com/search?q="+song+" lyrics")
+	linksoup=bs4.BeautifulSoup(res.text,"html.parser")
+	lyrics=linksoup.find('div',class_='hwc')
+
+	if lyrics!=None:
+		try:
+			if lyrics.div.div.div.text != None:
+				return(lyrics.div.div.div.text)
+		except:
+			return("Song Not Found")
+	else:
+		return("Song Not Found")
 
 #Making an instance of class Bot 
 client=commands.Bot(command_prefix = "!")
@@ -36,6 +86,8 @@ async def on_ready():
 #Greets New Users
 @client.event 
 async def on_member_join(member):
+	#Prints on terminal
+	print(f"{member.mention} has Joined the server")
 	#Sends Direct Message
 	await member.create_dm()
 	await member.dm_channel.send(f"Hi {member.name}, welcome to our Guild!")
@@ -47,6 +99,9 @@ async def on_member_join(member):
 #Shows Which Member Was removed on server
 @client.event
 async def on_member_remove(member):
+	#Prints on terminal
+	print(f"{member.mention} has left the server")
+	#Says on Main Channel
 	for channel in member.guild.channels:
 		if (str(channel) == "voidmain"):
 			await channel.send(f"{member.mention} Was kicked RIP")
@@ -61,8 +116,10 @@ async def on_message(message):
 	content = message.content
 	channel = message.channel
 	#Check if entered message  had a slang
-	if(message.content in badwords):
+	if(str(message.content).lower() in badwords):
 		await message.channel.purge(limit = 1)
+		await author.create_dm()
+		await author.dm_channel.send(f"Dear {author}, Please refrain from using Cursewords in our Server!")
 	print(f'{author}: {content}')
 	#To check if message contains valid command
 	await client.process_commands(message)
@@ -89,20 +146,30 @@ async def help(ctx):
 	description = "Some Useful Commands(Commands start with !)\n",
 	colour = discord.Colour.red()
 	)
+	embed.set_author(name = "I'mTHEBot" , icon_url = "https://mpng.pngfly.com/20180709/ysa/kisspng-discord-internet-bot-computer-software-teamspeak-c-discord-icon-circle-5b42ddfd4ae4a3.8911388115311088613068.jpg")
+	embed.set_thumbnail(url = "https://mpng.pngfly.com/20180709/ysa/kisspng-discord-internet-bot-computer-software-teamspeak-c-discord-icon-circle-5b42ddfd4ae4a3.8911388115311088613068.jpg")
 	embed.add_field(name = "users", value = "Shows Total Number of Users in The server", inline = False)
 	embed.add_field(name = "ping", value = "Shows the Bot's Ping to the server\n", inline = False)
 	embed.add_field(name = "clear", value = "Clears Messages According to the value after command", inline = False)
+	embed.add_field(name = "movie", value = "Shows Short Summary of Movie given After Command", inline = False)
+	embed.add_field(name = "google", value = "Shows Google Search Top Result", inline = False)
+	embed.add_field(name = "youtube", value = "Shows Youtube Link Given After Command", inline = False)
+	embed.add_field(name = "song", value = "Shows the Lyrics of Song Given After Command", inline = False)
 	embed.add_field(name = "noice", value = "Try it", inline = False)
 	embed.add_field(name = "echo", value = "Echo!!!", inline = False)
 	embed.add_field(name = "ninenine", value = "NINE-NINE", inline = False)
 	embed.add_field(name = "99", value = "B99 Quotes", inline = False)
-	embed.set_author(name = "I'mTHEBot" , icon_url = "https://mpng.pngfly.com/20180709/ysa/kisspng-discord-internet-bot-computer-software-teamspeak-c-discord-icon-circle-5b42ddfd4ae4a3.8911388115311088613068.jpg")
 	await ctx.send(content = None, embed=embed)
 
 @client.command(name='99')
 async def nine_nine(ctx):
 	#Simple Command Which Generates Random Brooklyn Nine Nine Quotes
-	b99quotes=["I'm the human form of the 💯 emoji.","Bingpot!","Cool Cool cool cool cool cool cool cool","no doubt no doubt no doubt no doubt"]
+	b99quotes=[
+	"I'm the human form of the 💯 emoji.",
+	"Bingpot!",
+	"Cool Cool cool cool cool cool cool cool",
+	"no doubt no doubt no doubt no doubt"
+	]
 	response = random.choice(b99quotes)
 	await ctx.send(response)
 
@@ -121,8 +188,45 @@ async def echo(ctx,*args):
 	#Repeats The message
 	output = ''
 	for word in args:
-		output+=(word+' ') 
+		output += (word + ' ') 
 	await ctx.send(output)
+
+@client.command()
+async def youtube(ctx, *args):
+	#Shows First Link On Google According To Command With Platfrom Youtube
+	search_word = ''
+	for word in args:
+		search_word += (word + '+')
+	link = "https://www.google.com/search?q=" + word
+	link = first_link(link, "youtube.com")
+	await ctx.send(f"{link}")	
+
+@client.command()
+async def google(ctx, *args):
+	#Shows First Link On Google Accordint To Command
+	search_word = ''
+	for word in args:
+		search_word += (word + '+')
+	link = "https://www.google.com/search?q=" + word
+	link = first_link(link)
+	await ctx.send(f"{link}")
+
+@client.command()
+async def movie(ctx, *args):
+	#Shows A short Summary of the movie given as an Arguments
+	output = ''
+	for word in args:
+		output += (word + ' ') 
+	review = movie_review(output)
+	await ctx.send(review)
+
+@client.command()
+async def song(ctx, *args):
+	#Prints the lyrics of song given
+	output = ''
+	for word in args:
+		output += (word + ' ') 
+	await ctx.send(song_lyrics(output))
 
 @client.command()
 async def users(ctx):
@@ -136,7 +240,7 @@ async def ping(ctx):
 	await ctx.send(f"Pong! {round(client.latency*1000)}ms")
 	
 @client.command()
-async def clear(ctx, amount = 2):
+async def clear(ctx, amount = 1):
 	#Clears Messages According to the value after command Else Clears a message
 	if (amount == 0):
 		await ctx.send(f"You cannot delete 0 messages")
@@ -170,6 +274,7 @@ async def kick(ctx, member : discord.Member, * , reason = None):
 @client.command()
 async def  logout(ctx):
 	#Turns Bot OFF
+	await ctx.send("Peace")
 	await client.logout()
 	
 client.run(token)
