@@ -4,7 +4,7 @@ A Simple Discord Bot With few Functionalities.
 
 Commands Begin with an Exclamation(!)
 
-# Commands:-
+# Commands :-
 
 	users - Shows Total Number of Users in the Server
 	
@@ -28,7 +28,7 @@ Commands Begin with an Exclamation(!)
 	
 
 
-# Annonymous Commands:-
+# Annonymous Commands :-
 
 	ban - Can Ban Users with role below Your own
 	
