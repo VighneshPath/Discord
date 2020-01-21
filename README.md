@@ -4,7 +4,7 @@ A Simple Discord Bot With few Functionalities.
 
 Commands Begin with an Exclamation(!)
 
-Commands:-
+# Commands:-
 
 	users - Shows Total Number of Users in the Server
 	
@@ -28,7 +28,7 @@ Commands:-
 	
 
 
-Annonymous Commands:-
+# Annonymous Commands:-
 
 	ban - Can Ban Users with role below Your own
 	
@@ -39,7 +39,7 @@ Annonymous Commands:-
 	logout - Stops Bot from working\
 	
 
-Functions :-
+# Functions :-
 
 	Welcome - The Bot's Welcomes New User on Server as well as on DM
 	
@@ -48,7 +48,7 @@ Functions :-
 	User Leave - When a user leaves, The bot Sends a message saying The user left on the server
 	
 
-Steps to Install :-
+# Steps to Install :-
 
 1)On Command Prompt Type git clone https://github.com/VighneshPath/Discord.git
 
