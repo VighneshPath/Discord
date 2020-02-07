@@ -50,13 +50,13 @@ Commands Begin with an Exclamation(!)
 
 # Steps to Install :-
 
-1)On Command Prompt Type git clone https://github.com/VighneshPath/Discord.git
+	1)On Command Prompt Type git clone https://github.com/VighneshPath/Discord.git
 
-2)In config.json set the value for "TOKEN" as the bot token you have created 
+	2)In config.json set the value for "TOKEN" as the bot token you have created 
 
-3)In config.json set the value for "Server_Id" as your servers ID
+	3)In config.json set the value for "Server_Id" as your servers ID
 
-4)In config.json set the value for "Bad_Words" in a list format according to the words you want to censor
+	4)In config.json set the value for "Bad_Words" in a list format according to the words you want to censor
 
-5)In Bot.py Find and Replace "voidmain" with your main server name
+	5)In Bot.py Find and Replace "voidmain" with your main server name
 
